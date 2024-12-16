@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}" />
+<body>
+	<div class="container text-center py-3">
+	    <h1 class="display-6">Confirmation requise</h1>
+	    <p>Veuillez confirmer votre achat de <span th:text="${amount}+' '+${currency}"></span></p>
+	    <p>Order ID: <span th:text="${orderId}"></span></p>
+        <p>Event ID: <span th:text="${eid}"></span></p>
+	    <a class="btn btn-primary btn-sm" th:href="${approvalLink}">Confirmer le paiement</a>
+	</div>} 
+</body>
+</html>

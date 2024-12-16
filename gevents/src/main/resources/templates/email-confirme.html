@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}" />
+<body>
+	<!-- <div th:replace="~{layout :: header}"></div> -->
+    <div class="container text-center py-3">
+	    <h1 class="display-6">Adresse Email confirmée avec succès</h1>
+	    <p>Votre adresse email est confirmée, vous pouvez maintenent utiiliser Gevents!</p>
+	    <a class="btn btn-primary btn-sm" th:href="@{/evenements}">Commencer à utiliser Gevents</a>
+	</div>
+</body>
+</html>

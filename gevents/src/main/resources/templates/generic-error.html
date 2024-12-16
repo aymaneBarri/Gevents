@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}" />
+<body>
+	<!-- <div th:replace="~{layout :: header}"></div> -->
+    <div class="container text-center py-3">
+	    <h1 class="display-6">Une erreur est survenu</h1>
+	    <p>Un problème a survenu à votre paiement, veuillez réessayer plus-tard</p>
+	    <p>Order ID: <span th:text="${orderId}"></span></p>
+	    <a class="btn btn-primary btn-sm" th:href="@{/evenements}">Retour à la page d'accueil</a>
+	</div>
+</body>
+</html>

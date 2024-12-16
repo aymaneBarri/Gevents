@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+   <head th:replace="~{layout :: head}" />
+   <body>
+   	<script>
+         $(document).ready(function(){
+            $.getJSON("http://localhost:8080/api/evenements", function(result){
+               $.each(result, function(key,value) {
+                  $("#productsJson").append(value.id+" "+value.titre+" ");
+               }); 
+            });
+         });
+      </script>
+      
+      <div th:replace="~{layout :: header}"></div>
+      <div class="container">
+        <!-- <h1>Fruits: </h1>
+        <div id = "productsJson"> </div> -->
+        <!-- <div class="d-grid d-md-flex justify-content-end">
+        	<a class="btn btn-primary btn-sm" th:href="@{/evenements/create}" type="button">Créer un évènement</a>
+        </div> -->
+	        <table sec:authorize="hasRole('ROLE_PARTICIPANT')" class="table table-bordered table-sm caption-top shadow-sm">
+	        	<caption>Evenements à venir</caption>
+			  <thead>
+			    <tr>
+			      <!-- <th scope="col">#</th> -->
+			      <th scope="col">Titre</th>
+			      <th scope="col">Date</th>
+			      <th scope="col">Lieu</th>
+			      <th scope="col">Capacité</th>
+			      <th scope="col">Prix d'entrée</th>
+			      <th scope="col">Note</th>
+			      <th scope="col">Organisateur</th>
+			      <th/>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr th:each="evenement,i: ${evenements}">
+			      <!-- <th scope="row" th:text="${evenement.id}"/> -->
+			      <td><span th:text="${evenement.titre}"></span> <span th:text="${evenement.type}" class="badge text-bg-secondary"></span></td>
+			      <td th:text="${evenement.date}"/>
+			      <td th:text="${evenement.lieu}"/>
+			      <td th:text="${evenement.participants.size}+'/'+${evenement.capacite}"/>
+			      <td th:text="${evenement.prix}+' USD'"/>
+			      <td th:text="${noteEvenements[i.index]}+'/5'"/>
+			      <td th:text="${evenement.organisateur.email}"/>
+			      <td>
+					<a class="btn btn-primary btn-sm" th:href="@{/evenements/{id}(id=${evenement.id})}">Détails</a>
+<!-- 					<a class="btn btn-success btn-sm" th:href="@{/evenements/participer/{id}(id=${evenement.id})}">Participer</a>-->
+					<!-- <a th:if="${#sets.isEmpty(evenement.participants) or evenement.participants == null}"
+					   class="btn btn-success btn-sm"
+					   th:href="@{/payment/create-order(eid=${evenement.id}, amount=${evenement.prix}, currency='USD')}"
+					   onclick="return confirm('Etes-vous sûre de participer a cet évènement?')">
+					    Participer
+					</a>
+					<a th:unless="${#sets.isEmpty(evenement.participants) or evenement.participants == null}"
+					   th:each="participation : ${evenement.participants}"
+					   th:class="${participation.participant.id == #authentication.principal.utilisateur.id} ? 'btn btn-success btn-sm disabled' : 'btn btn-success btn-sm'"
+					   th:href="@{/payment/create-order(eid=${evenement.id}, amount=${evenement.prix}, currency='USD')}"
+					   onclick="return confirm('Etes-vous sûre de participer a cet évènement?')">
+					    Participer
+					</a> -->
+					
+					<a th:if="${participantEvenements[i.index]}"
+					   class="btn btn-success btn-sm disabled"
+					   th:href="@{/payment/create-order(eid=${evenement.id}, amount=${evenement.prix}, currency='USD')}"
+					   onclick="return confirm('Etes-vous sûre de participer a cet évènement?')">
+					    Participant
+					</a>
+					<a th:unless="${participantEvenements[i.index]}"
+					   class="btn btn-success btn-sm"
+					   th:href="@{/payment/create-order(eid=${evenement.id}, amount=${evenement.prix}, currency='USD')}"
+					   onclick="return confirm('Etes-vous sûre de participer a cet évènement?')">
+					    Participer
+					</a>
+					
+				  </td>
+			    </tr>
+			  </tbody>
+			</table>
+		
+			<div sec:authorize="hasRole('ROLE_ORGANISATEUR')">
+				<span>Créez un nouveau évènement </span><a class="btn btn-primary btn-sm pull-right" th:href="@{/evenements/create}" type="button">Créer un évènement</a>
+			<table class="table table-bordered table-sm caption-top shadow-sm">
+	        	<caption>Evenements organisés par moi</caption>
+			  <thead>
+			    <tr>
+			      <!-- <th scope="col">#</th> -->
+			      <th scope="col">Titre</th>
+			      <th scope="col">Date</th>
+			      <th scope="col">Lieu</th>
+			      <th scope="col">Capacité</th>
+			      <th scope="col">Prix d'entrée</th>
+			      <th scope="col">Note</th>
+			      <th/>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr th:each="evenement,i: ${evenementsOrganises}">
+			      <!-- <th scope="row" th:text="${evenement.id}"/> -->
+			      <td><span th:text="${evenement.titre}"></span> <span th:text="${evenement.type}" class="badge text-bg-secondary"></span></td>
+			      <td th:text="${evenement.date}"/>
+			      <td th:text="${evenement.lieu}"/>
+			      <td th:text="${evenement.participants.size}+'/'+${evenement.capacite}"/>
+			      <td th:text="${evenement.prix}+' USD'"/>
+			      <td th:text="${noteEvenementsOrganises[i.index]}+'/5'"/>
+			      <td>
+					<a class="btn btn-warning btn-sm" th:href="@{/evenements/{id}(id=${evenement.id})}">Modifier</a>
+					<a class="btn btn-danger btn-sm" th:href="@{/evenements/delete/{id}(id=${evenement.id})}" onclick="return confirm('Etes-vous sûre d\'annuler cet évènement?')">Annuler</a>
+				  </td>
+			    </tr>
+			  </tbody>
+			</table>
+			</div>
+		
+			<table class="table table-bordered table-sm caption-top shadow-sm">
+	        	<caption>Evenements expirés</caption>
+			  <thead>
+			    <tr>
+			      <!-- <th scope="col">#</th> -->
+			      <th scope="col">Titre</th>
+			      <th scope="col">Date</th>
+			      <th scope="col">Lieu</th>
+			      <th scope="col">Capacité</th>
+			      <th scope="col">Prix d'entrée</th>
+			      <th scope="col">Note</th>
+			      <th scope="col">Organisateur</th>
+			      <th/>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr th:each="evenement,i: ${evenementsExpires}">
+			      <!-- <th scope="row" th:text="${evenement.id}"/> -->
+			      <td><span th:text="${evenement.titre}"></span> <span th:text="${evenement.type}" class="badge text-bg-secondary"></span></td>
+			      <td th:text="${evenement.date}"/>
+			      <td th:text="${evenement.lieu}"/>
+			      <td th:text="${evenement.participants.size}+'/'+${evenement.capacite}"/>
+			      <td th:text="${evenement.prix}+' USD'"/>
+			      <td th:text="${noteEvenementsExpires[i.index]}+'/5'"/>
+			      <td th:text="${evenement.organisateur.email}"/>
+			      <td>
+					<a class="btn btn-primary btn-sm" th:href="@{/evenements/{id}(id=${evenement.id})}">Détails</a>
+				  </td>
+			    </tr>
+			  </tbody>
+			</table>
+		</div>
+		<div th:if="${create_success}" class="alert alert-success d-flex align-items-center" role="alert">
+			<strong>Holy guacamole!</strong> You should check in on some of those fields below.
+  			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		<div th:if="${cancel_success}" class="alert alert-danger d-flex align-items-center" role="alert">
+			<strong>Holy guacamole!</strong> You should check in on some of those fields below.
+  			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		<div th:if="${participate_success}" class="alert alert-success d-flex align-items-center" role="alert">
+			<strong>Holy guacamole!</strong> You should check in on some of those fields below.
+  			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+		<span th:if="${participate_success}">hey</span>
+	</body>
+</html>

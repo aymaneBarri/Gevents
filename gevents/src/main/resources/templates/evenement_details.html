@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+   <head th:replace="~{layout :: head}" />
+<body>
+   <div th:replace="~{layout :: header}"></div>
+   <div class="container">
+	   <h2 class="display-6 mb-3">Détailles de l'évènement</h2>
+		<form sec:authorize="hasRole('ROLE_PARTICIPANT')" th:action="@{/evenements/participer/{id}(id=${evenement.id})}" th:object="${evenement}" method="get" class="p-3 border shadow-sm">
+        	<div class="mb-3">
+			  <label for="type" class="form-label">Type d'évènement</label>
+			  <input readonly th:field="*{type}" class="form-control" id="type" name="type" aria-label="Default select example">
+			</div>
+			
+			<div class="mb-3">
+			  <label for="titre" class="form-label">Titre</label>
+			  <input readonly type="text" th:field="*{titre}" class="form-control">
+				<!-- <div class="invalid-feedback">
+			      Please provide a valid city.
+			    </div> -->
+			    <p th:if="${#fields.hasErrors('titre')}" th:errorclass="text-danger" th:errors="*{titre}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="description" class="form-label">Description</label>
+			  <textarea readonly th:field="*{description}" class="form-control" rows="3"></textarea>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="date" class="form-label">Date</label>
+			  <input readonly type="datetime-local" th:field="*{date}" th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd hh:mm')}" class="form-control">
+			  <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
+			  <p th:if="${#fields.hasErrors('date')}" th:errorclass="text-danger" th:errors="*{date}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="lieu" class="form-label">Lieu</label>
+			  	<input readonly type="text" th:field="*{lieu}" class="form-control">
+				<p th:if="${#fields.hasErrors('lieu')}" th:errorclass="text-danger" th:errors="*{lieu}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="capacite" class="form-label">Capacite</label>
+			  	<input readonly type="number" th:field="*{capacite}" min=1 class="form-control">
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="prix" class="form-label">Prix (USD)</label>
+			  	<input readonly type="number" th:field="*{prix}" min=0 class="form-control">
+			</div>
+			<div class="mb-3">
+			  	<label for="rating" class="form-label">Note</label>
+				<span th:text="${rating} + ' / 5'"></span>
+			</div>
+			
+			<div th:if="${isParticipating}" class="mb-3">
+				<label for="rating" class="form-label">Votre évaluation</label>
+				<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+				  <input type="radio" class="btn-check" name="rating" id="btnradio1" autocomplete="off">
+				  <label class="btn btn-outline-primary" for="btnradio1">1</label>
+				
+				  <input type="radio" class="btn-check" name="rating" id="btnradio2" autocomplete="off">
+				  <label class="btn btn-outline-primary" for="btnradio2">2</label>
+				
+				  <input type="radio" class="btn-check" name="rating" id="btnradio3" autocomplete="off">
+				  <label class="btn btn-outline-primary" for="btnradio3">3</label>
+				  
+				  <input type="radio" class="btn-check" name="rating" id="btnradio4" autocomplete="off">
+				  <label class="btn btn-outline-primary" for="btnradio4">4</label>
+				  
+				  <input type="radio" class="btn-check" name="rating" id="btnradio5" autocomplete="off">
+				  <label class="btn btn-outline-primary" for="btnradio5">5</label>
+				</div>
+				
+			</div>
+			
+			
+        	<!-- <a class="btn btn-warning btn-sm" th:href="@{/evenements/rate/{id}(id=${evenement.id}, rating=)}">Noter</a> -->
+        	<a th:if="${isParticipating}" th:href="@{/evenements/rate/{id}(id=${evenement.id})}" id="rateLink" class="btn btn-warning btn-sm" data-evenement-id="[[${evenement.id}]]">Noter</a>
+        	<script>
+			    const rateLink = document.getElementById('rateLink');
+			
+			    // Add an event listener for the radio buttons
+			    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+			        radio.addEventListener('change', function () {
+			            // Get the selected rating value
+			            const selectedRating = document.querySelector('input[name="rating"]:checked')?.id.replace('btnradio', '');
+			
+			            if (selectedRating) {
+			                // Append the selected rating as a query parameter to the existing href
+			                const baseHref = rateLink.getAttribute('href').split('?')[0]; // Remove existing query parameters
+			                rateLink.href = `${baseHref}?rating=${selectedRating}`;
+			            }
+			        });
+			    });
+			</script>
+			        	
+			<input th:unless="${isParticipating}" type="submit" class="btn btn-success btn-sm" value="Participer">
+        	<a class="btn btn-danger btn-sm" th:href="@{/evenements}">Annuler</a>
+		</form>
+		
+		<form sec:authorize="hasRole('ROLE_ORGANISATEUR')" th:action="@{/evenements/{id}(id=${evenement.id})}" th:object="${evenement}" method="post" class="p-3 border shadow-sm">
+        	<div class="mb-3">
+			  <label for="type" class="form-label">Type d'évènement</label>
+			  <select th:field="*{type}" class="form-control">
+				  <option th:each="type : ${T(fsk.glcc.gevents.model.TypeEvenement).values()}" 
+        			th:value="${type}" th:text="${type}">Type d'évènement</option>
+				</select>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="titre" class="form-label">Titre</label>
+			  <input type="text" th:field="*{titre}" class="form-control">
+				<!-- <div class="invalid-feedback">
+			      Please provide a valid city.
+			    </div> -->
+			    <p th:if="${#fields.hasErrors('titre')}" th:errorclass="text-danger" th:errors="*{titre}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="description" class="form-label">Description</label>
+			  <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="date" class="form-label">Date</label>
+			  <input type="datetime-local" th:value="*{date}" th:field="*{date}" th:min="${#dates.format(#dates.createNow(), 'YYYY-MM-dd HH:mm')}" class="form-control">
+			  <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
+			  <p th:if="${#fields.hasErrors('date')}" th:errorclass="text-danger" th:errors="*{date}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="lieu" class="form-label">Lieu</label>
+			  	<input type="text" th:field="*{lieu}" class="form-control">
+				<p th:if="${#fields.hasErrors('lieu')}" th:errorclass="text-danger" th:errors="*{lieu}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="capacite" class="form-label">Capacite</label>
+			  	<input type="number" th:field="*{capacite}" min=1 class="form-control">
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="prix" class="form-label">Prix (USD)</label>
+			  	<input type="number" th:field="*{prix}" min=0 class="form-control">
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="rating" class="form-label">Note</label>
+				<span th:text="${rating} + ' / 5'"></span>
+			</div>
+			
+			<div class="mb-3">
+			  	<label class="form-label">Liste des participants</label>
+				<ul th:each="participant: *{participants}" class="list-group">
+				  <li class="list-group-item"><span th:text="${participant.participant.email}"></span> <a class="btn btn-danger btn-sm" th:href="@{/evenements/kick (eid=${evenement.id}, pid=${participant.participant.id})}">kick</a></li>
+				</ul>
+			</div>
+			
+			<input type="submit" class="btn btn-warning btn-sm" value="Modifier">
+        	<a class="btn btn-danger btn-sm" th:href="@{/evenements}">Annuler</a>
+		</form>
+		<div th:if="${kick_success}" class="alert alert-danger d-flex align-items-center" role="alert">
+			<strong>Holy guacamole!</strong> You should check in on some of those fields below.
+  			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	</div>
+</body>
+</html>

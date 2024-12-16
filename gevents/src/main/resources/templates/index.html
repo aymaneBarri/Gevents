@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  	<head th:replace="~{layout :: head}" />
+	<body>
+		<div th:replace="~{layout :: header}"></div>
+		<div class="container text-center py-3">
+			<h6 class="display-6 my-5">Bienvenu dans Gevents, votre assistant pour l'organisation de tout type d'évènements.</h6>
+			<p>Créer un compte pour commencer à utiliser Gevents</p>
+			<a class="btn btn-primary mb-3" href="#" th:href="@{/register}" role="button">Créer un compte <strong>Participant</strong> ou <strong>Organisateur</strong></a>
+			<p>ou</p>
+			<a class="btn btn-primary mb-3" href="#" th:href="@{/login}" role="button">Se Connecter</a>
+			<p>Connectez-vous si vous avez déjà un compte</p>
+		</div>
+	</body>
+</html>

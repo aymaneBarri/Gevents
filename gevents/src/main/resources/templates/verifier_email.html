@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+   <head th:replace="~{layout :: head}" />
+	<body>
+		<div th:replace="~{layout :: header}"></div>
+      	<div class="container text-center py-3">
+			<h6 class="display-6">Veuillez vérifier votre adresse email</h6>
+			<a class="btn btn-primary btn-sm" th:href="@{/send-confirmation}">Envoyer confirmation</a>
+		</div>
+	</body>
+</html>

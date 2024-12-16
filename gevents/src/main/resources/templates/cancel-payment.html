@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}" />
+<body>
+	<!-- <div th:replace="~{layout :: header}"></div> -->
+    <div class="container text-center py-3">
+	    <h1 class="display-6">Paiement annulé</h1>
+	    <p>Vous avez annulé votre paiement</p>
+	    <p>Order ID: <span th:text="${orderId}"></span></p>
+	    <a class="btn btn-primary btn-sm" th:href="@{/evenements}">Retour à la page d'accueil</a>
+	</div>
+</body>
+</html>

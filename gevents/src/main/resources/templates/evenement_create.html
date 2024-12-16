@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+   <head th:replace="~{layout :: head}" />
+<body>
+   <div th:replace="~{layout :: header}"></div>
+   <div class="container">
+	   <h2 class="display-6 mb-3">Créer un évènement</h2>
+		<form th:action="@{/evenements}" method="post" th:object="${evenement}" class="p-3 border shadow-sm">
+			<div class="mb-3">
+			  <label for="type" class="form-label">Type d'évènement</label>
+			  <select th:field="${evenement.type}" class="form-control">
+				  <option th:each="type : ${T(fsk.glcc.gevents.model.TypeEvenement).values()}" 
+        			th:value="${type}" th:text="${type}">Type d'évènement</option>
+				</select>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="titre" class="form-label">Titre</label>
+			  <input type="text" th:field="*{titre}" class="form-control">
+				<!-- <div class="invalid-feedback">
+			      Please provide a valid city.
+			    </div> -->
+			    <p th:if="${#fields.hasErrors('titre')}" th:errorclass="text-danger" th:errors="*{titre}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="description" class="form-label">Description</label>
+			  <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+			</div>
+			
+			<div class="mb-3">
+			  <label for="date" class="form-label">Date</label>
+			  <input type="datetime-local" th:field="*{date}" th:min="${#dates.format(#dates.createNow(), 'yyyy-MM-dd hh:mm')}" class="form-control">
+			  <div class="form-text" id="basic-addon4">Example help text goes outside the input group.</div>
+			  <p th:if="${#fields.hasErrors('date')}" th:errorclass="text-danger" th:errors="*{date}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="lieu" class="form-label">Lieu</label>
+			  	<input type="text" th:field="*{lieu}" class="form-control">
+				<p th:if="${#fields.hasErrors('lieu')}" th:errorclass="text-danger" th:errors="*{lieu}"></p>
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="capacite" class="form-label">Capacite</label>
+			  	<input type="number" th:field="*{capacite}" min=1 class="form-control">
+			</div>
+			
+			<div class="mb-3">
+			  	<label for="prix" class="form-label">Prix (USD)</label>
+			  	<input type="number" th:field="*{prix}" min=0 class="form-control">
+			</div>
+			
+			<input type="submit" class="btn btn-primary btn-sm" value="Créer évènement">
+        	<a class="btn btn-danger btn-sm" th:href="@{/evenements}">Annuler</a>
+		</form>
+	</div>
+</body>
+</html>
